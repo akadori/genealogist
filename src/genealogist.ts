@@ -26,3 +26,15 @@ export class Genealogist {
         return requiredToRequiers;
     }
 }
+
+
+// test
+const genealogist = new Genealogist();
+genealogist.watch();
+const a = require("../__tests__/small/intercepters/temp/root.js");
+console.log(a);
+genealogist.stop();
+genealogist.getRequiredToRequiers().forEach((value, key) => {
+	console.log(key, value);
+}
+);

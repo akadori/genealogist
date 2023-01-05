@@ -12,6 +12,10 @@ export const on = (
 		console.log("wrappedRequire called");
 		//@ts-ignore to get the absolute path of the module
 		const absolutePath = Module._resolveFilename(request, this);
+		// eslint-disable-next-line no-console
+		console.log(`this.filename: ${JSON.stringify(this.filename)}`);
+		// eslint-disable-next-line no-console
+		console.log(`absolutePath: ${JSON.stringify(absolutePath)}`);
 		callback(absolutePath, this.filename);
 		return originalRequire.call(this, request);
 	};
