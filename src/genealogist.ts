@@ -1,40 +1,39 @@
-import { on, off } from "./intercepters/cjs";
-const requiredToRequiers: Map<string, Array<string>> = new Map();
+import { on, off } from "./intercepters/requireIntercepter";
+
+export const DEFAULT_IGNORE_PATTERNS = ["node_modules"];
 
 export class Genealogist {
-	constructor() {}
+	private ignorePatternsRegex: RegExp;
+	private requiredToRequiers: Map<string, Array<string>> = new Map();
+
+	constructor(options: { ignorePatterns?: Array<string> } = {}) {
+		const ignorePatterns = options.ignorePatterns || DEFAULT_IGNORE_PATTERNS;
+		this.ignorePatternsRegex = new RegExp(
+			ignorePatterns.map((pattern) => `(${pattern})`).join("|"),
+		);
+	}
+
 	watch() {
-        // eslint-disable-next-line no-console
-        console.log("watching");
 		on((absolutePath: string, parentPath: string) => {
-			if (!requiredToRequiers.has(absolutePath)) {
-				requiredToRequiers.set(absolutePath, []);
+			if (this.ignorePatternsRegex.test(absolutePath)) {
+				return;
 			}
-			requiredToRequiers.get(absolutePath)!.push(parentPath);
+			if (!this.requiredToRequiers.has(absolutePath)) {
+				this.requiredToRequiers.set(absolutePath, []);
+			}
+			this.requiredToRequiers.get(absolutePath)!.push(parentPath);
 		});
 	}
 
 	getRequiredBy(absolutePath: string): Array<string> {
-		return requiredToRequiers.get(absolutePath) || [];
+		return this.requiredToRequiers.get(absolutePath) || [];
 	}
 
 	stop() {
 		off();
 	}
 
-    getRequiredToRequiers() {
-        return requiredToRequiers;
-    }
+	getRequiredToRequiers() {
+		return this.requiredToRequiers;
+	}
 }
-
-
-// test
-const genealogist = new Genealogist();
-genealogist.watch();
-const a = require("../__tests__/small/intercepters/temp/root.js");
-console.log(a);
-genealogist.stop();
-genealogist.getRequiredToRequiers().forEach((value, key) => {
-	console.log(key, value);
-}
-);
