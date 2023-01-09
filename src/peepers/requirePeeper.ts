@@ -3,14 +3,12 @@ import Module from "module";
 let originalRequire: typeof Module.prototype.require;
 
 export const on = (
-	callback: (requiredModulePath: string, parentModulePath: string) => void,
+	callback: (parentModule: Module, requiredModulePath: string, ) => void,
 ) => {
 	originalRequire = Module.prototype.require;
-	const wrappedRequire = function (this: Module, request: string) {
-		//@ts-ignore to get the absolute path of the module
-		const absolutePath = Module._resolveFilename(request, this);
-		callback(absolutePath, this.filename);
-		return originalRequire.call(this, request);
+	const wrappedRequire = function (this: Module, requiredModulePath: string) {
+		callback(this, requiredModulePath);
+		return originalRequire.call(this, requiredModulePath);
 	};
 	wrappedRequire.resolve = originalRequire.resolve;
 	wrappedRequire.cache = originalRequire.cache;
