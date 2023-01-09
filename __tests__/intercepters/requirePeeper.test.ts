@@ -54,20 +54,28 @@ describe("require peeper", () => {
     // 3. a.js require c.js
     // 4. b.js require c.js
     expect(requireCalledCount).toBe(4);
-
     off();
 	});
   it("The plugged operation receives the same arguments as the original require", () => {
-    
     const passedArguments: Array<{m: Module, r: string}> = [];
-    let requireCalledCount = 0;
     on((m, r) => {
-      requireCalledCount++;
       passedArguments.push({m, r});
     });
 		const { a } = require(`${tempPath}/${randomDirName}/a.js`);
-
+    // passedArguments.forEach(({m, r}) => {
+    //   console.log(m, r);
+    // });
     // TODO: I don't know how to test this.
     expect(1).toBe(1);
+    off();
+  });
+  it("after off, the plugged operation should not be called", () => {
+    let requireCalledCount = 0;
+    on((_, _2) => {
+      requireCalledCount++;
+    });
+    off();
+    const { a } = require(`${tempPath}/${randomDirName}/a.js`);
+    expect(requireCalledCount).toBe(0);
   });
 });

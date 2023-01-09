@@ -1,8 +1,8 @@
 {
   "name": "genealogist",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
-  "main": "dist/main.js",
+  "main": "dist/genealogist.js",
   "scripts": {
     "test": "vitest run __tests__/ --coverage",
     "test:watch": "vitest watch __tests__/",
@@ -21,5 +21,8 @@
     "tsx": "^3.12.1",
     "typescript": "^4.9.4",
     "vitest": "^0.26.3"
+  },
+  "dependencies": {
+    "is-builtin-module": "^3.2.0"
   }
 }
